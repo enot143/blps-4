@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "label": "Test Id",
+      "type": "number",
+      "id": "Field_0cm1py6",
+      "key": "testId",
+      "validate": {
+        "required": true,
+        "min": 1
+      }
+    },
+    {
+      "label": "Number of Reqiured Attempts",
+      "type": "number",
+      "id": "Field_1jlw1h3",
+      "key": "attemptCount",
+      "validate": {
+        "required": true,
+        "min": 1
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_1y30i0i"
+}

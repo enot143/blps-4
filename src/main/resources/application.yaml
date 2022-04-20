@@ -1,0 +1,29 @@
+#spring.datasource.url: jdbc:h2:file:./camunda-h2-database
+#
+#camunda.bpm.admin-user:
+#  id: demo
+#  password: demo
+
+camunda:
+  bpm:
+    database:
+      type: postgres
+    admin-user:
+      id: demo
+      password: demo
+    authorization:
+      enabled: true
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driverClassName: org.postgresql.Driver
+    #DB connection:
+    url: jdbc:postgresql://localhost:5432/070322
+    username: postgres
+    password: postgres

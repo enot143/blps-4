@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "label": "id",
+      "type": "number",
+      "id": "Field_0ut4mt2",
+      "key": "testId",
+      "validate": {
+        "required": true,
+        "min": 1
+      }
+    }
+  ],
+  "type": "default",
+  "id": "testIdForm"
+}
