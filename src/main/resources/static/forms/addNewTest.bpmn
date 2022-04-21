@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1ave50n" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:collaboration id="addNewTest">
+    <bpmn:participant id="Participant_0aacnfs" processRef="Process_1ccdy6p" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1ccdy6p" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_019ppp1">
+      <bpmn:lane id="Lane_1fjuucd" name="модератор">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>addNweTest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0v2irxc</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_17g0u5l" name="сервер">
+        <bpmn:flowNodeRef>Event_0fksjnx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>add</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1ro0lur</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_18q63k9</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="addNweTest" name="Добавить новый тест в систему" camunda:formKey="camunda-forms:/forms/addNewTest.form">
+      <bpmn:incoming>Flow_18q63k9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uxkglm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_18q63k9" sourceRef="StartEvent_1" targetRef="addNweTest" />
+    <bpmn:sequenceFlow id="Flow_0uxkglm" sourceRef="addNweTest" targetRef="add" />
+    <bpmn:sequenceFlow id="Flow_1t8dwul" sourceRef="Event_1ro0lur" targetRef="Activity_0v2irxc" />
+    <bpmn:sequenceFlow id="Flow_0ycj6fo" sourceRef="add" targetRef="Event_0fksjnx" />
+    <bpmn:endEvent id="Event_0fksjnx">
+      <bpmn:incoming>Flow_0ycj6fo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0v2irxc" name="Сообщить об ошибке">
+      <bpmn:incoming>Flow_1t8dwul</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="add" name="Добавление" camunda:delegateExpression="#{addNewTest}">
+      <bpmn:incoming>Flow_0uxkglm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ycj6fo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1ro0lur" attachedToRef="add">
+      <bpmn:outgoing>Flow_1t8dwul</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zo69rb" errorRef="Error_1flvol8" camunda:errorCodeVariable="Add_Test_Error_Message" />
+    </bpmn:boundaryEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1flvol8" name="Add_Test_Error" errorCode="Add_Test_Error" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="addNewTest">
+      <bpmndi:BPMNShape id="Participant_0aacnfs_di" bpmnElement="Participant_0aacnfs" isHorizontal="true">
+        <dc:Bounds x="129" y="117" width="631" height="253" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1fjuucd_di" bpmnElement="Lane_1fjuucd" isHorizontal="true">
+        <dc:Bounds x="159" y="117" width="601" height="125" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_17g0u5l_di" bpmnElement="Lane_17g0u5l" isHorizontal="true">
+        <dc:Bounds x="159" y="242" width="601" height="128" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18q63k9_di" bpmnElement="Flow_18q63k9">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="270" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uxkglm_di" bpmnElement="Flow_0uxkglm">
+        <di:waypoint x="320" y="217" />
+        <di:waypoint x="320" y="310" />
+        <di:waypoint x="430" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t8dwul_di" bpmnElement="Flow_1t8dwul">
+        <di:waypoint x="480" y="252" />
+        <di:waypoint x="480" y="217" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ycj6fo_di" bpmnElement="Flow_0ycj6fo">
+        <di:waypoint x="530" y="310" />
+        <di:waypoint x="602" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kv30pq_di" bpmnElement="addNweTest">
+        <dc:Bounds x="270" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fksjnx_di" bpmnElement="Event_0fksjnx">
+        <dc:Bounds x="602" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11byz6j_di" bpmnElement="Activity_0v2irxc">
+        <dc:Bounds x="430" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1weap8b_di" bpmnElement="add">
+        <dc:Bounds x="430" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dlnwfa_di" bpmnElement="Event_1ro0lur">
+        <dc:Bounds x="462" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

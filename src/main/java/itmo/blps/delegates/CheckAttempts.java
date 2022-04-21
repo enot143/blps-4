@@ -32,6 +32,7 @@ public class CheckAttempts implements JavaDelegate {
         boolean attempts = true;
         Test t = variablesService.getTest(delegateExecution);
         User user = variablesService.getUser();
+        System.out.println(user.getId());
         //если не существует еще записи о прохождении теста, создать ее
         if (userTestRepo.getUserTestByUser(user) == null){
             UserTest ut = new UserTest();

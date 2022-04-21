@@ -23,18 +23,20 @@
     <bpmn:laneSet id="LaneSet_10l1ddc">
       <bpmn:lane id="server" name="server">
         <bpmn:flowNodeRef>retrieveTest</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1tiinhv</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1mahaht</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1cn0i0j</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_08ylvcb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1tiinhv</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="client" name="client">
-        <bpmn:flowNodeRef>Event_12hti3t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>getResult</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_12hti3t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>chooseTest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1yhtrgy</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1laoali</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>sendTest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>errorWhileGettingTest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1laoali</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="SequenceFlow_1fp17al" sourceRef="StartEvent_1" targetRef="chooseTest" />
@@ -57,13 +59,10 @@
       <bpmn:incoming>Flow_0ziiq3a</bpmn:incoming>
       <bpmn:outgoing>Flow_10geyn0</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_1tiinhv" name="Есть ли регистрация на курс?">
-      <bpmn:incoming>Flow_10geyn0</bpmn:incoming>
-      <bpmn:outgoing>Flow_0owodi1</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1kx58o9</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_10geyn0" sourceRef="retrieveTest" targetRef="Gateway_1tiinhv" />
-    <bpmn:sequenceFlow id="Flow_1kx58o9" name="Нет" sourceRef="Gateway_1tiinhv" targetRef="Activity_1laoali" />
+    <bpmn:sequenceFlow id="Flow_1kx58o9" name="Нет" sourceRef="Gateway_1tiinhv" targetRef="Activity_1laoali">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!registration}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:transaction id="Activity_1mahaht">
       <bpmn:incoming>Flow_0vtic48</bpmn:incoming>
       <bpmn:outgoing>Flow_0oszqzb</bpmn:outgoing>
@@ -140,10 +139,6 @@
         <bpmn:outgoing>Flow_1r8idbw</bpmn:outgoing>
       </bpmn:serviceTask>
     </bpmn:transaction>
-    <bpmn:boundaryEvent id="Event_1cn0i0j" attachedToRef="Activity_1mahaht">
-      <bpmn:outgoing>Flow_0oat9jp</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0p9fr2w" errorRef="Error_1pzsadh" camunda:errorMessageVariable="Error_Message" />
-    </bpmn:boundaryEvent>
     <bpmn:startEvent id="StartEvent_1" name="Необходимость пройти тест">
       <bpmn:outgoing>SequenceFlow_1fp17al</bpmn:outgoing>
     </bpmn:startEvent>
@@ -154,14 +149,32 @@
     <bpmn:userTask id="Activity_1yhtrgy" name="Посмотреть ошибку">
       <bpmn:incoming>Flow_0oat9jp</bpmn:incoming>
     </bpmn:userTask>
-    <bpmn:userTask id="Activity_1laoali" name="Регистрации нет">
-      <bpmn:incoming>Flow_1kx58o9</bpmn:incoming>
-    </bpmn:userTask>
     <bpmn:userTask id="sendTest" name="Отправить на проверку" camunda:formKey="camunda-forms:/forms/testForm.form">
       <bpmn:incoming>Flow_0owodi1</bpmn:incoming>
       <bpmn:outgoing>Flow_0vtic48</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1cn0i0j" attachedToRef="Activity_1mahaht">
+      <bpmn:outgoing>Flow_0oat9jp</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0p9fr2w" errorRef="Error_1pzsadh" camunda:errorMessageVariable="Error_Message" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_08ylvcb" attachedToRef="retrieveTest">
+      <bpmn:outgoing>Flow_1tg748t</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_02mvxnn" errorRef="Error_1rnw7rs" camunda:errorMessageVariable="Error_Message" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1tg748t" sourceRef="Event_08ylvcb" targetRef="errorWhileGettingTest" />
+    <bpmn:userTask id="errorWhileGettingTest" name="Ошибка">
+      <bpmn:incoming>Flow_1tg748t</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1tiinhv" name="Есть ли регистрация на курс?">
+      <bpmn:incoming>Flow_10geyn0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0owodi1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kx58o9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_1laoali" name="Регистрации нет">
+      <bpmn:incoming>Flow_1kx58o9</bpmn:incoming>
+    </bpmn:userTask>
   </bpmn:process>
+  <bpmn:error id="Error_1rnw7rs" name="Not_Found" errorCode="Not_Found" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0sm1bnc">
       <bpmndi:BPMNShape id="Participant_1ty4yt6_di" bpmnElement="Participant_1ty4yt6" isHorizontal="true">
@@ -173,16 +186,20 @@
       <bpmndi:BPMNShape id="Lane_0r5rjcg_di" bpmnElement="server" isHorizontal="true">
         <dc:Bounds x="159" y="274" width="2030" height="346" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1tg748t_di" bpmnElement="Flow_1tg748t">
+        <di:waypoint x="470" y="362" />
+        <di:waypoint x="470" y="157" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kx58o9_di" bpmnElement="Flow_1kx58o9">
-        <di:waypoint x="600" y="395" />
-        <di:waypoint x="600" y="157" />
+        <di:waypoint x="630" y="395" />
+        <di:waypoint x="630" y="157" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="570" y="298" width="20" height="14" />
+          <dc:Bounds x="600" y="343" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10geyn0_di" bpmnElement="Flow_10geyn0">
         <di:waypoint x="520" y="420" />
-        <di:waypoint x="575" y="420" />
+        <di:waypoint x="605" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0oat9jp_di" bpmnElement="Flow_0oat9jp">
         <di:waypoint x="1340" y="312" />
@@ -201,7 +218,7 @@
         <di:waypoint x="930" y="465" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0owodi1_di" bpmnElement="Flow_0owodi1">
-        <di:waypoint x="625" y="420" />
+        <di:waypoint x="655" y="420" />
         <di:waypoint x="770" y="420" />
         <di:waypoint x="770" y="157" />
         <bpmndi:BPMNLabel>
@@ -229,18 +246,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1d7iv80_di" bpmnElement="retrieveTest" bioc:stroke="#000000" bioc:fill="#ffffff" color:background-color="#ffffff" color:border-color="#000000">
         <dc:Bounds x="420" y="380" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1tiinhv_di" bpmnElement="Gateway_1tiinhv" isMarkerVisible="true">
-        <dc:Bounds x="575" y="395" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="560" y="455" width="80" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_173adky_di" bpmnElement="Activity_1laoali">
-        <dc:Bounds x="550" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1urv6vp_di" bpmnElement="sendTest">
-        <dc:Bounds x="720" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0e2ltow_di" bpmnElement="Activity_1mahaht" isExpanded="true">
         <dc:Bounds x="930" y="330" width="980" height="260" />
@@ -336,6 +341,24 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0q017c7_di" bpmnElement="Activity_1yhtrgy">
         <dc:Bounds x="1290" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1urv6vp_di" bpmnElement="sendTest">
+        <dc:Bounds x="720" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_114flgx_di" bpmnElement="errorWhileGettingTest">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1tiinhv_di" bpmnElement="Gateway_1tiinhv" isMarkerVisible="true">
+        <dc:Bounds x="605" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="590" y="455" width="80" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_173adky_di" bpmnElement="Activity_1laoali">
+        <dc:Bounds x="580" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07dtvlv_di" bpmnElement="Event_08ylvcb">
+        <dc:Bounds x="452" y="362" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0bsgmst_di" bpmnElement="Event_1cn0i0j">
         <dc:Bounds x="1322" y="312" width="36" height="36" />

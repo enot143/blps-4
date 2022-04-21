@@ -41,6 +41,7 @@ public class SendRequest implements JavaDelegate {
         attemptDTO.setTestId(t.getId());
         attemptDTO.setQuantity(quantity);
         attemptDTO.setUserId(user.getId());
+        System.out.println(attemptDTO.getUserId() + " " + attemptDTO.getTestId() + " " + attemptDTO.getQuantity());
         rabbitTemplate.convertAndSend(topicExchangeName, "attempts.key", convertObjectToBytes(attemptDTO));
     }
     public static byte[] convertObjectToBytes(Object obj) throws IOException {

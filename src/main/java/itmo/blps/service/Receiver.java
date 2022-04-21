@@ -13,6 +13,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,6 +22,7 @@ import java.util.Date;
 
 @Component
 public class Receiver {
+    String messageToUser;
     @Autowired
     TestRepo testRepo;
     @Autowired
@@ -38,6 +40,7 @@ public class Receiver {
         return is.readObject();
     }
 
+    @Transactional
     public void receiveMessage(byte[] message) {
         try {
             AttemptDTO attemptDTO = (AttemptDTO) deserialize(message);
@@ -63,19 +66,21 @@ public class Receiver {
             UserCourseKey userCourseKey = new UserCourseKey();
             userCourseKey.setCourseId(t.getWeek().getCourse().getId());
             userCourseKey.setUserId(attemptDTO.getUserId());
-            int addedAttempts = userCourseRepo.getById(userCourseKey).getAdded_attempts();
+            int addedAttempts = userCourseRepo.getUserCourseById(userCourseKey).getAdded_attempts();
             if (addedAttempts + attemptDTO.getQuantity() <= availableAttempts) {
                 userTestRepo.addAttempts(t.getId(), attemptDTO.getUserId(), attemptDTO.getQuantity());
                 userCourseRepo.setAttempts(t.getWeek().getCourse().getId(), attemptDTO.getUserId(), addedAttempts + attemptDTO.getQuantity());
                 System.out.println("Successfully added attempts");
+                messageToUser = "Successfully added attempts";
             } else throw new TestException("Limit is less than requested quantity");
         } catch (IOException | ClassNotFoundException | IllegalArgumentException | TestException e) {
             System.out.println("Fail : " + e.getMessage());
-            runtimeService.createMessageCorrelation("AttemptMessage")
-                    .setVariable("messageAttempts", e.getMessage())
-                    .correlate();
+            messageToUser = e.getMessage();
 //            e.printStackTrace();
         }
+        runtimeService.createMessageCorrelation("AttemptMessage")
+                .setVariableLocal("messageAttempts", messageToUser)
+                .correlate();
     }
 }
 

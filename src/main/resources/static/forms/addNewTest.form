@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "label": "Number of Week",
+      "type": "number",
+      "id": "Field_03w4qx3",
+      "key": "weekId",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "New Test",
+      "type": "textfield",
+      "id": "Field_053icfa",
+      "key": "newTest",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0o433jh"
+}

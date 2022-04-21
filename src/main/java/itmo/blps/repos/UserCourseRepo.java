@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserCourseRepo extends JpaRepository<UserCourse, UserCourseKey> {
+    UserCourse getUserCourseById(UserCourseKey id);
+
     @Query("SELECT COUNT (*)  FROM UserCourse uc WHERE uc.certificate_status = TRUE")
     Long getCertificateCount();
 

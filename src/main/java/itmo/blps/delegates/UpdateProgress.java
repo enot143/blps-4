@@ -71,7 +71,7 @@ public class UpdateProgress implements JavaDelegate {
         if (!userCourseRepo.checkCertificateStatus(t.getWeek().getCourse().getId(), user.getId())) {
             userCourseRepo.setCertificateStatus(t.getWeek().getCourse().getId(), user.getId());
         }
-        delegateExecution.setVariableLocal("testProgress", progressOfTest);
+        delegateExecution.setVariable("testProgress", progressOfTest);
     }
 }
 
